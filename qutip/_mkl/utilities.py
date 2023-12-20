@@ -11,6 +11,19 @@ def _set_mkl():
     Anaconda and Intel Python distributions.
 
     """
+    imkl_dir = os.environ.get('EBROOTIMKL', '')
+    if imkl_dir:
+        # module imkl has been loaded
+        imkl_version = os.environ['EBVERSIONIMKL']
+        library = 'libmkl_rt.so'
+        so_file = os.path.join(imkl_dir, 'mkl', imkl_version, 'lib', 'intel64', library)
+        try:
+            qset.mkl_lib = cdll.LoadLibrary(so_file)
+            qset.has_mkl = True
+            return
+        except
+            print(f'Could not open {so_file}')
+
     if (
         _blas_info() != 'INTEL MKL'
         or sys.platform not in ['darwin', 'win32', 'linux', 'linux2']
